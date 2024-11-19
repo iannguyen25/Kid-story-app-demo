@@ -26,6 +26,7 @@ public class ChildSettingsFragment extends Fragment {
     }
 
     private void logout() {
-        ((MainActivity) requireActivity()).logoutUser();
+        Intent intent = new Intent(requireActivity(), AccountSelectionActivity.class);
+        startActivity(intent);
     }
 }

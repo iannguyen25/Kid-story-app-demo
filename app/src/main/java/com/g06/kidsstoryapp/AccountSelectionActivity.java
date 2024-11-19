@@ -41,7 +41,9 @@ public class AccountSelectionActivity extends AppCompatActivity {
             String selectedAccountId = accountIds.get(position);
             if (position == 0) { // Parent account
                 // Log in as parent
-                startActivity(new Intent(AccountSelectionActivity.this, MainActivity.class));
+                Intent intent = new Intent(AccountSelectionActivity.this, LoginActivity.class);
+                intent.putExtra("parentId", selectedAccountId);
+                startActivity(intent);
             } else {
                 // Log in as child
                 Intent intent = new Intent(AccountSelectionActivity.this, MainActivity.class);

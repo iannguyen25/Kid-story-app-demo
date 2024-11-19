@@ -152,17 +152,18 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    @Override
-    protected void onPause() {
-        if (isChildAccount && timeLeftInMillis > 0) {
-            long currentTimestamp = System.currentTimeMillis();
-            db.collection("children").document(userId)
-                    .update("lastPausedTime", currentTimestamp, "timeLimit", timeLeftInMillis / 1000 / 60); // Lưu phút còn lại
-            if (countDownTimer != null) {
-                countDownTimer.cancel();
-            }
-        }
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        if (isChildAccount && timeLeftInMillis > 0) {
+//            long currentTimestamp = System.currentTimeMillis();
+//            db.collection("children").document(userId)
+//                    .update("lastPausedTime", currentTimestamp, "timeLimit", timeLeftInMillis / 1000 / 60); // Lưu phút còn lại
+//            if (countDownTimer != null) {
+//                countDownTimer.cancel();
+//            }
+//        }
+//    }
 
     @Override
     protected void onDestroy() {
