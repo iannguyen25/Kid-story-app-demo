@@ -43,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
             userId = getIntent().getStringExtra("childId");
         }
 
+
+
         setupBottomNavigation();
         loadUserData();
     }
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
+                startActivity(new Intent(MainActivity.this, AccountSelectionActivity.class));
                 logoutUser();
             }
         }.start();
