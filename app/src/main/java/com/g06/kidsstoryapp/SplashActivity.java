@@ -1,7 +1,6 @@
 package com.g06.kidsstoryapp;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,12 +18,7 @@ public class SplashActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                checkLoginStatus();
-            }
-        }, SPLASH_TIMEOUT);
+        new Handler().postDelayed(this::checkLoginStatus, SPLASH_TIMEOUT);
     }
 
     private void checkLoginStatus() {

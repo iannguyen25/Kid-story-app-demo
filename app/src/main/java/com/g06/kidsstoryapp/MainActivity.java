@@ -3,15 +3,15 @@ package com.g06.kidsstoryapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.view.MenuItem;
 import android.widget.TextView;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        userId = mAuth.getCurrentUser().getUid();
+        userId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
 
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
         timerTextView = findViewById(R.id.timerTextView);
@@ -46,29 +46,26 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupBottomNavigation() {
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                Fragment selectedFragment = null;
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
 
-            if (item.getItemId() == R.id.nav_home) {
-                selectedFragment = new HomeFragment();
-            } else if (item.getItemId() == R.id.nav_settings) {
-                if (isChildAccount) {
-                    selectedFragment = new ChildSettingsFragment();
-                } else {
-                    selectedFragment = new ParentSettingsFragment();
-                }
+        if (item.getItemId() == R.id.nav_home) {
+            selectedFragment = new HomeFragment();
+        } else if (item.getItemId() == R.id.nav_settings) {
+            if (isChildAccount) {
+                selectedFragment = new ChildSettingsFragment();
+            } else {
+                selectedFragment = new ParentSettingsFragment();
             }
+        }
 
-            if (selectedFragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragmentContainer, selectedFragment)
-                        .commit();
-            }
+        if (selectedFragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragmentContainer, selectedFragment)
+                    .commit();
+        }
 
-            return true;
-            }
+        return true;
         });
 
         // Set default fragment

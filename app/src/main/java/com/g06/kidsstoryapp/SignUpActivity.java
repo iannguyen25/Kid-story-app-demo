@@ -2,26 +2,21 @@ package com.g06.kidsstoryapp;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class SignUpActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText, rePasswordEditText;
-    private Button signUpButton, loginButton;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -36,21 +31,13 @@ public class SignUpActivity extends AppCompatActivity {
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         rePasswordEditText = findViewById(R.id.rePasswordEditText);
-        signUpButton = findViewById(R.id.signUpButton);
-        loginButton = findViewById(R.id.loginButton);
+        Button signUpButton = findViewById(R.id.signUpButton);
+        Button loginButton = findViewById(R.id.loginButton);
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signUpUser();
-            }
-        });
+        signUpButton.setOnClickListener(v -> signUpUser());
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); // Go back to LoginActivity
-            }
+        loginButton.setOnClickListener(v -> {
+            finish(); // Go back to LoginActivity
         });
     }
 
@@ -70,16 +57,13 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign up success, save user data to Firestore
-                            saveUserToFirestore(mAuth.getCurrentUser().getUid(), email);
-                        } else {
-                            Toast.makeText(SignUpActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        // Sign up success, save user data to Firestore
+                        saveUserToFirestore(Objects.requireNonNull(mAuth.getCurrentUser()).getUid(), email);
+                    } else {
+                        Toast.makeText(SignUpActivity.this, "Authentication failed.",
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -92,16 +76,13 @@ public class SignUpActivity extends AppCompatActivity {
 
         db.collection("parents").document(userId)
                 .set(user)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(SignUpActivity.this, "Sign up successful", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
-                            finish();
-                        } else {
-                            Toast.makeText(SignUpActivity.this, "Failed to save user data", Toast.LENGTH_SHORT).show();
-                        }
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        Toast.makeText(SignUpActivity.this, "Sign up successful", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(SignUpActivity.this, LoginActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(SignUpActivity.this, "Failed to save user data", Toast.LENGTH_SHORT).show();
                     }
                 });
     }

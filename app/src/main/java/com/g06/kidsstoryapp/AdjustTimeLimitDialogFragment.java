@@ -37,6 +37,7 @@ public class AdjustTimeLimitDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_adjust_time_limit_dialog, null);
 
         db = FirebaseFirestore.getInstance();
+        assert getArguments() != null;
         childId = getArguments().getString("childId");
 
         currentTimeLimitTextView = view.findViewById(R.id.currentTimeLimitTextView);

@@ -6,12 +6,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class SelectChildDialogFragment extends DialogFragment {
 
@@ -20,9 +23,10 @@ public class SelectChildDialogFragment extends DialogFragment {
     private List<String> childNames;
     private List<String> childIds;
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         LayoutInflater inflater = requireActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.fragment_select_child_dialog, null);
 
@@ -51,7 +55,7 @@ public class SelectChildDialogFragment extends DialogFragment {
     }
 
     private void loadChildren(ArrayAdapter<String> adapter) {
-        String parentId = mAuth.getCurrentUser().getUid();
+        String parentId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         db.collection("children")
                 .whereEqualTo("parentId", parentId)
                 .get()

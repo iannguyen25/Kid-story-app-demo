@@ -16,6 +16,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class AccountSelectionActivity extends AppCompatActivity {
 
@@ -38,26 +39,23 @@ public class AccountSelectionActivity extends AppCompatActivity {
 
         loadAccounts();
 
-        accountListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String selectedAccountId = accountIds.get(position);
-                if (position == 0) { // Parent account
-                    // Log in as parent
-                    startActivity(new Intent(AccountSelectionActivity.this, MainActivity.class));
-                } else {
-                    // Log in as child
-                    Intent intent = new Intent(AccountSelectionActivity.this, MainActivity.class);
-                    intent.putExtra("childId", selectedAccountId);
-                    startActivity(intent);
-                }
-                finish();
+        accountListView.setOnItemClickListener((parent, view, position, id) -> {
+            String selectedAccountId = accountIds.get(position);
+            if (position == 0) { // Parent account
+                // Log in as parent
+                startActivity(new Intent(AccountSelectionActivity.this, MainActivity.class));
+            } else {
+                // Log in as child
+                Intent intent = new Intent(AccountSelectionActivity.this, MainActivity.class);
+                intent.putExtra("childId", selectedAccountId);
+                startActivity(intent);
             }
+            finish();
         });
     }
 
     private void loadAccounts() {
-        String parentId = mAuth.getCurrentUser().getUid();
+        String parentId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         accountList.add("Parent Account"); // Add parent account
         accountIds.add(parentId);
 

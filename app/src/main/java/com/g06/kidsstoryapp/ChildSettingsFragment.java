@@ -7,11 +7,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import androidx.fragment.app.Fragment;
 
-import java.util.Objects;
-
 public class ChildSettingsFragment extends Fragment {
-
-    private Button logoutButton;
 
     public ChildSettingsFragment() {
         // Required empty public constructor
@@ -22,13 +18,13 @@ public class ChildSettingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_settings, container, false);
 
-        logoutButton = view.findViewById(R.id.logoutButton);
+        Button logoutButton = view.findViewById(R.id.logoutButton);
         logoutButton.setOnClickListener(v -> logout());
 
         return view;
     }
 
     private void logout() {
-        ((MainActivity) Objects.requireNonNull(getActivity())).logoutUser();
+        ((MainActivity) requireActivity()).logoutUser();
     }
 }

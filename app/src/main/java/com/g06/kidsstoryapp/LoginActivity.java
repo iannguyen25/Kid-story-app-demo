@@ -24,7 +24,6 @@ import java.util.Objects;
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText, passwordEditText;
-    private Button loginButton, signUpButton;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -38,22 +37,12 @@ public class LoginActivity extends AppCompatActivity {
 
         emailEditText = findViewById(R.id.emailEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
-        loginButton = findViewById(R.id.loginButton);
-        signUpButton = findViewById(R.id.signUpButton);
+        Button loginButton = findViewById(R.id.loginButton);
+        Button signUpButton = findViewById(R.id.signUpButton);
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginUser();
-            }
-        });
+        loginButton.setOnClickListener(v -> loginUser());
 
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
-            }
-        });
+        signUpButton.setOnClickListener(v -> startActivity(new Intent(LoginActivity.this, SignUpActivity.class)));
     }
 
     private void loginUser() {
@@ -66,24 +55,21 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         mAuth.signInWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            saveLoginState();
-                            // Đảm bảo người dùng đã đăng nhập trước khi truy cập Firestore
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            if (user != null) {
-                                checkForChildAccounts(user.getUid());
-                                startActivity(new Intent(LoginActivity.this, AccountSelectionActivity.class));
-                            } else {
-                                Toast.makeText(LoginActivity.this, "Authentication failed: User is null",
-                                        Toast.LENGTH_SHORT).show();
-                            }
+                .addOnCompleteListener(this, task -> {
+                    if (task.isSuccessful()) {
+                        saveLoginState();
+                        // Đảm bảo người dùng đã đăng nhập trước khi truy cập Firestore
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            checkForChildAccounts(user.getUid());
+                            startActivity(new Intent(LoginActivity.this, AccountSelectionActivity.class));
                         } else {
-                            Toast.makeText(LoginActivity.this, "Authentication failed: " + task.getException().getMessage(),
+                            Toast.makeText(LoginActivity.this, "Authentication failed: User is null",
                                     Toast.LENGTH_SHORT).show();
                         }
+                    } else {
+                        Toast.makeText(LoginActivity.this, "Authentication failed: " + Objects.requireNonNull(task.getException()).getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -99,33 +85,30 @@ public class LoginActivity extends AppCompatActivity {
         db.collection("children")
                 .whereEqualTo("parentId", userId)
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            if (task.getResult().isEmpty()) {
-                                // No child accounts, go to CreateChildAccountActivity
-                                startActivity(new Intent(LoginActivity.this, CreateChildAccountActivity.class));
-                            } else {
-                                // Child accounts exist, go to MainActivity (Home)
-                                startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                            }
-                            finish();
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        if (task.getResult().isEmpty()) {
+                            // No child accounts, go to CreateChildAccountActivity
+                            startActivity(new Intent(LoginActivity.this, CreateChildAccountActivity.class));
                         } else {
-                            Exception e = task.getException();
-                            if (e instanceof FirebaseFirestoreException) {
-                                FirebaseFirestoreException ffe = (FirebaseFirestoreException) e;
-                                if (ffe.getCode() == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
-                                    Toast.makeText(LoginActivity.this, "Permission denied. Please check Firestore rules.", Toast.LENGTH_LONG).show();
-                                } else {
-                                    Toast.makeText(LoginActivity.this, "Firestore error: " + ffe.getCode(), Toast.LENGTH_LONG).show();
-                                }
-                            } else {
-                                assert e != null;
-                                Toast.makeText(LoginActivity.this, "Error checking child accounts: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                            }
-                            Log.e("LoginActivity", "Error checking child accounts", e);
+                            // Child accounts exist, go to MainActivity (Home)
+                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
                         }
+                        finish();
+                    } else {
+                        Exception e = task.getException();
+                        if (e instanceof FirebaseFirestoreException) {
+                            FirebaseFirestoreException ffe = (FirebaseFirestoreException) e;
+                            if (ffe.getCode() == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
+                                Toast.makeText(LoginActivity.this, "Permission denied. Please check Firestore rules.", Toast.LENGTH_LONG).show();
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Firestore error: " + ffe.getCode(), Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            assert e != null;
+                            Toast.makeText(LoginActivity.this, "Error checking child accounts: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                        Log.e("LoginActivity", "Error checking child accounts", e);
                     }
                 });
     }

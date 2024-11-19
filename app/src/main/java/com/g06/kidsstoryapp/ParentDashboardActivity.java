@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import java.util.Map;
+import java.util.Objects;
 
 public class ParentDashboardActivity extends AppCompatActivity {
 
@@ -29,7 +30,7 @@ public class ParentDashboardActivity extends AppCompatActivity {
     }
 
     private void loadChildrenData() {
-        String parentId = mAuth.getCurrentUser().getUid();
+        String parentId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         db.collection("children")
                 .whereEqualTo("parentId", parentId)
                 .get()

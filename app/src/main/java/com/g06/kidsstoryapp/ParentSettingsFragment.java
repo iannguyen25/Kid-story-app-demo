@@ -10,11 +10,10 @@ import androidx.fragment.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Objects;
+
 public class ParentSettingsFragment extends Fragment {
 
-    private Button logoutButton;
-    private Button adjustTimeLimitButton;
-    private Button parentDashboardButton;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -30,9 +29,9 @@ public class ParentSettingsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        logoutButton = view.findViewById(R.id.logoutButton);
-        adjustTimeLimitButton = view.findViewById(R.id.adjustTimeLimitButton);
-        parentDashboardButton = view.findViewById(R.id.parentDashboardButton);
+        Button logoutButton = view.findViewById(R.id.logoutButton);
+        Button adjustTimeLimitButton = view.findViewById(R.id.adjustTimeLimitButton);
+        Button parentDashboardButton = view.findViewById(R.id.parentDashboardButton);
 
         logoutButton.setOnClickListener(v -> logout());
         adjustTimeLimitButton.setOnClickListener(v -> showAdjustTimeLimitDialog());
@@ -42,11 +41,11 @@ public class ParentSettingsFragment extends Fragment {
     }
 
     private void logout() {
-        ((MainActivity) getActivity()).logoutUser();
+        ((MainActivity) Objects.requireNonNull(getActivity())).logoutUser();
     }
 
     private void showAdjustTimeLimitDialog() {
-        String parentId = mAuth.getCurrentUser().getUid();
+        String parentId = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
         db.collection("children")
                 .whereEqualTo("parentId", parentId)
                 .get()
