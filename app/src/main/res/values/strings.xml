@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">kidsstoryapp</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_logo">App logo</string>
+    <string name="login">Đăng nhập</string>
+    <string name="sign_up">Đăng kí</string>
+    <string name="password">Mật khẩu</string>
+    <string name="email">Email</string>
+    <string name="re_enter_password">Nhập lại mật khẩu</string>
+    <string name="back_to_login">Chưa có tài khoản? Đăng nhập</string>
+    <string name="create_child_account">Tạo tài khoản cho con của bạn</string>
+    <string name="child_name">Tên con của bạn</string>
+    <string name="child_age">Tuổi con của bạn</string>
+    <string name="create_account">Tạo tài khoản</string>
+    <string name="home">Trang chủ</string>
+    <string name="settings">Cài đặt</string>
+    <string name="logout">Đăng xuất</string>
+    <string name="adjust_time_limit">Điều chỉnh thời gian</string>
+    <string name="parent_dashboard">Dashboard</string>
+</resources>

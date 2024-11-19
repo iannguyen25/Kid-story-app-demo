@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "581996503186",
+    "project_id": "amp-g01-reading-app-19fcc",
+    "storage_bucket": "amp-g01-reading-app-19fcc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581996503186:android:cba096b4190d7e7ddd464b",
+        "android_client_info": {
+          "package_name": "com.example.amp_g01_reading_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO4DpSBqeCgJ7ogykRd2sQ4nT6omUNQ7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:581996503186:android:cd42339cdbf0dec6dd464b",
+        "android_client_info": {
+          "package_name": "com.g06.kidsstoryapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAO4DpSBqeCgJ7ogykRd2sQ4nT6omUNQ7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
