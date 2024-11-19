@@ -12,7 +12,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class AdjustTimeLimitDialogFragment extends DialogFragment {
@@ -20,8 +19,15 @@ public class AdjustTimeLimitDialogFragment extends DialogFragment {
     private EditText hoursEditText, minutesEditText;
     private TextView currentTimeLimitTextView;
     private FirebaseFirestore db;
-    private FirebaseAuth mAuth;
     private String childId;
+
+    public static AdjustTimeLimitDialogFragment newInstance(String childId) {
+        AdjustTimeLimitDialogFragment fragment = new AdjustTimeLimitDialogFragment();
+        Bundle args = new Bundle();
+        args.putString("childId", childId);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @NonNull
     @Override
@@ -31,7 +37,7 @@ public class AdjustTimeLimitDialogFragment extends DialogFragment {
         View view = inflater.inflate(R.layout.fragment_adjust_time_limit_dialog, null);
 
         db = FirebaseFirestore.getInstance();
-        mAuth = FirebaseAuth.getInstance();
+        childId = getArguments().getString("childId");
 
         currentTimeLimitTextView = view.findViewById(R.id.currentTimeLimitTextView);
         hoursEditText = view.findViewById(R.id.hoursEditText);
@@ -55,15 +61,11 @@ public class AdjustTimeLimitDialogFragment extends DialogFragment {
     }
 
     private void loadCurrentTimeLimit() {
-        String parentId = mAuth.getCurrentUser().getUid();
-        db.collection("children")
-                .whereEqualTo("parentId", parentId)
-                .limit(1)
+        db.collection("children").document(childId)
                 .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    if (!queryDocumentSnapshots.isEmpty()) {
-                        childId = queryDocumentSnapshots.getDocuments().get(0).getId();
-                        Long timeLimit = queryDocumentSnapshots.getDocuments().get(0).getLong("timeLimit");
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        Long timeLimit = documentSnapshot.getLong("timeLimit");
                         if (timeLimit != null) {
                             currentTimeLimitTextView.setText("Current time limit: " + timeLimit + " minutes");
                         }
@@ -85,15 +87,13 @@ public class AdjustTimeLimitDialogFragment extends DialogFragment {
 
     private void updateTimeLimit() {
         int newTimeLimit = getMinutes();
-        if (childId != null) {
-            db.collection("children").document(childId)
-                    .update("timeLimit", newTimeLimit)
-                    .addOnSuccessListener(aVoid -> {
-                        Toast.makeText(getContext(), "Time limit updated successfully", Toast.LENGTH_SHORT).show();
-                        dismiss();
-                    })
-                    .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to update time limit", Toast.LENGTH_SHORT).show());
-        }
+        db.collection("children").document(childId)
+                .update("timeLimit", newTimeLimit)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(getContext(), "Time limit updated successfully", Toast.LENGTH_SHORT).show();
+                    dismiss();
+                })
+                .addOnFailureListener(e -> Toast.makeText(getContext(), "Failed to update time limit", Toast.LENGTH_SHORT).show());
     }
 
     private int getMinutes() {
