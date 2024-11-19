@@ -24,7 +24,7 @@ public class ParentSettingsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_parent_settings, container, false);
+        View view = inflater.inflate(R.layout.fragment_settings, container, false);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -32,16 +32,24 @@ public class ParentSettingsFragment extends Fragment {
         Button logoutButton = view.findViewById(R.id.logoutButton);
         Button adjustTimeLimitButton = view.findViewById(R.id.adjustTimeLimitButton);
         Button parentDashboardButton = view.findViewById(R.id.parentDashboardButton);
+        Button changeAccountButton = view.findViewById(R.id.AccountChange);
 
         logoutButton.setOnClickListener(v -> logout());
         adjustTimeLimitButton.setOnClickListener(v -> showAdjustTimeLimitDialog());
         parentDashboardButton.setOnClickListener(v -> openParentDashboard());
+        changeAccountButton.setOnClickListener(v -> showChangeDialog());
 
         return view;
     }
 
+    private void showChangeDialog() {
+        Intent intent = new Intent(getActivity(), AccountSelectionActivity.class);
+        startActivity(intent);
+
+    }
+
     private void logout() {
-        ((MainActivity) Objects.requireNonNull(getActivity())).logoutUser();
+        ((MainActivity) requireActivity()).logoutUser();
     }
 
     private void showAdjustTimeLimitDialog() {

@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -97,11 +99,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private boolean oneMinuteWarningShown = false;
+
     private void startTimer() {
         countDownTimer = new CountDownTimer(timeLeftInMillis, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 timeLeftInMillis = millisUntilFinished;
+
+                int minutes = (int) (timeLeftInMillis / 1000) / 60;
+                int seconds = (int) (timeLeftInMillis / 1000) % 60;
+
+                if (minutes == 0 && !oneMinuteWarningShown) {
+                    Toast.makeText(MainActivity.this, "You have 1 minute left!", Toast.LENGTH_SHORT).show();
+                    oneMinuteWarningShown = true;
+                }
                 updateTimerText();
                 updateFirebaseTimeLeft();
             }
@@ -123,16 +135,33 @@ public class MainActivity extends AppCompatActivity {
     private void updateFirebaseTimeLeft() {
         if (isChildAccount) {
             db.collection("children").document(userId)
-                    .update("timeLeft", timeLeftInMillis / 1000 / 60); // Update time left in minutes
+                    .update("timeLimit", timeLeftInMillis / 1000 / 60); // Update time left in minutes
         }
     }
 
     void logoutUser() {
         mAuth.signOut();
-        Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+        Intent intent = new Intent(MainActivity.this, AccountSelectionActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if (isChildAccount && timeLeftInMillis > 0) {
+            long currentTimestamp = System.currentTimeMillis();
+            db.collection("children").document(userId)
+                    .update("lastPausedTime", currentTimestamp, "timeLimit", timeLeftInMillis / 1000 / 60); // Lưu phút còn lại
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+            }
+        }
     }
 
     @Override

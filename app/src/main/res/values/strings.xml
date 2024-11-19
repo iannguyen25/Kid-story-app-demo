@@ -18,4 +18,5 @@
     <string name="logout">Đăng xuất</string>
     <string name="adjust_time_limit">Điều chỉnh thời gian</string>
     <string name="parent_dashboard">Dashboard</string>
+    <string name="change_account">Đổi tài khoản</string>
 </resources>
